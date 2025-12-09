@@ -57,7 +57,7 @@ Generate custom Hitster-style music game cards from any Spotify playlist!
    - Click "Create app"
    - App name: `Hitster Card Generator` (or any name)
    - App description: `Generate game cards from playlists`
-   - Redirect URI: `http://localhost` (required but not used)
+   - Redirect URI: `https://localhost` (required but not used)
    - Check "Web API"
    - Click "Save"
 
@@ -73,7 +73,7 @@ Generate custom Hitster-style music game cards from any Spotify playlist!
 Open `hitster_card_creator.py` and replace the placeholders:
 
 ```python
-PLAYLIST_URL = "https://open.spotify.com/playlist/YOUR_PLAYLIST_ID"
+PLAYLIST_URL = "your_spotify_playlist_url_here"
 CLIENT_ID = "your_client_id_here"
 CLIENT_SECRET = "your_client_secret_here"
 ```
