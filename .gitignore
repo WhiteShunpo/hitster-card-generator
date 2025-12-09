@@ -29,7 +29,6 @@ all_cards.pdf
 test_*.png
 *.tmp
 *.ipynb
-*.png 
 # IDE
 .vscode/
 .idea/
