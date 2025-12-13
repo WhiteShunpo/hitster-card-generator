@@ -1,17 +1,28 @@
 # Hitster Card Generator 🎵
 
-Generate custom Hitster-style music game cards from any Spotify playlist!
+**Generate custom Hitster-style music game cards from any Spotify playlist!**
 
-![Example Cards](examples/example_cards.png)
+Turn your favorite playlists into a physical card game. This tool creates professional-looking cards with neon QR codes for scanning and date-based colored solution backs. It automatically handles the layout for double-sided printing.
 
-## Features
+## 👀 Preview
 
-- ✨ Generates QR code cards with colorful neon ring designs
-- 🎨 Year-based color gradients on solution cards
-- 📄 Print-ready PDF with 5x5cm cards in 4x5 grid layout
-- 🖨️ Optimized for duplex printing (alternating front/back pages)
-- 🎯 Supports playlists of any size (automatic pagination)
-- 🎨 Professional typography using Montserrat fonts
+The script generates a PDF optimized for duplex printing (the backs are mirrored so they align perfectly when cut).
+
+| **Page 1: Front (Scan to Play)** | **Page 2: Back (Solutions)** |
+|:---:|:---:|
+| <img src="example_pictures/qr_code_side.jpg" width="400" alt="PDF Front Page QR Codes"> | <img src="example_pictures/solution_side.png" width="400" alt="PDF Back Page Solutions"> |
+| *Neon rings with Spotify QR codes* | *Year-based color gradients (Purple=Oldest, Blue=Newest)* |
+
+---
+
+## ✨ Features
+
+- **Neon Design:** Generates QR codes with a randomized neon ring aesthetic.
+- **Smart Timeline Colors:** Solution cards use a dynamic color gradient (Purple → Pink → Gold → Blue) representing the release year relative to the other songs in the playlist.
+- **Print Ready:** Outputs a standard A4 PDF with 5x5cm cards in a 4x5 grid layout.
+- **Duplex Optimized:** Automatically generates alternating pages with mirrored layouts for accurate double-sided printing.
+- **Spotify Integration:** Fetches song metadata (Artist, Title, Year) and Spotify Links automatically using the Spotify Web API.
+
 
 ## Prerequisites
 
