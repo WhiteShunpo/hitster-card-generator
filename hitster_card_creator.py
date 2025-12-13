@@ -406,29 +406,47 @@ def create_cards_pdf(cards_folder, output_pdf_path):
 def generate_hitster_cards(playlist_url, client_id, client_secret, output_dir="hitster_cards"):
     """
     Complete pipeline: Fetch playlist → Generate cards → Create PDF
-    
-    Args:
-        playlist_url: Spotify playlist URL
-        client_id: Spotify API client ID
-        client_secret: Spotify API client secret
-        output_dir: Directory for card images and PDF
     """
     print("=== Hitster Card Generator ===\n")
     
-    # 1. Fetch playlist data
-    print("Step 1: Fetching playlist from Spotify...")
-    playlist_data = fetch_spotify_playlist(playlist_url, client_id, client_secret)
-    
-    # 2. Parse song data
-    print("\nStep 2: Parsing song data...")
-    song_names, release_years, artists, links = parse_playlist_data(playlist_data)
-    print(f"✓ Parsed {len(song_names)} songs")
-    
-    # 3. Create output directory
+    # Create output directory first so we can check/save the JSON file
     os.makedirs(output_dir, exist_ok=True)
+    json_file = os.path.join(output_dir, "songs.json")
+
+    # --- NEW LOGIC START ---
+    # If a local file exists, load it (allows you to fix years manually)
+    if os.path.exists(json_file):
+        print(f"Step 1: Loading local data from {json_file}...")
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            # Unpack the list of dictionaries back into separate lists
+            song_names = [d['name'] for d in data]
+            release_years = [d['year'] for d in data]
+            artists = [d['artist'] for d in data]
+            links = [d['link'] for d in data]
+            
+    else:
+        # Otherwise, fetch from Spotify as usual
+        print("Step 1: Fetching playlist from Spotify...")
+        playlist_data = fetch_spotify_playlist(playlist_url, client_id, client_secret)
+        
+        print("\nStep 2: Parsing song data...")
+        song_names, release_years, artists, links = parse_playlist_data(playlist_data)
+        
+        # Save to JSON so you can edit it later
+        with open(json_file, 'w', encoding='utf-8') as f:
+            data = [
+                {'name': n, 'year': y, 'artist': a, 'link': l}
+                for n, y, a, l in zip(song_names, release_years, artists, links)
+            ]
+            json.dump(data, f, indent=2)
+        print(f"✓ Saved data to {json_file} (Edit this file to fix incorrect years!)")
+    # --- NEW LOGIC END ---
+
+    print(f"✓ Processing {len(song_names)} songs")
     
-    # 4. Generate cards
-    print(f"\nStep 3: Generating {len(song_names)} cards...")
+    # 3. Generate cards (Existing logic)
+    print(f"\nStep 3: Generating cards...")
     for i, (link, name, artist, year) in enumerate(zip(links, song_names, artists, release_years)):
         if (i + 1) % 20 == 0:
             print(f"  Progress: {i+1}/{len(song_names)} cards...")
@@ -440,9 +458,7 @@ def generate_hitster_cards(playlist_url, client_id, client_secret, output_dir="h
         create_qr_with_neon_rings(qr_code, qr_path)
         create_solution_side(name, artist, year, release_years, sol_path)
     
-    print(f"✓ Generated all {len(song_names)} cards")
-    
-    # 5. Create PDF
+    # 4. Create PDF (Existing logic)
     print("\nStep 4: Creating print-ready PDF...")
     pdf_path = f"{output_dir}.pdf"
     create_cards_pdf(output_dir, pdf_path)
