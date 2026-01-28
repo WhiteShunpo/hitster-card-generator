@@ -135,6 +135,13 @@ st.subheader("Input")
 st.button("✨ Load Example Links", on_click=set_example_links)
 
 # Text Area connected to Session State
+user_playlist_input = st.text_input(
+    "Paste Playlist links here:", 
+    key="user_playlist_input",
+    placeholder="https://open.spotify.com/playlist/..."
+)
+
+# Text Area connected to Session State
 user_input = st.text_area(
     "Paste Spotify links here:", 
     height=200, 
@@ -145,6 +152,8 @@ user_input = st.text_area(
 # Real-time Link Counter
 # Note: Standard Spotify track links usually contain '/track/' and a 22-char ID
 valid_links_found = [line for line in user_input.split('\n') if "/track/" in line]
+# Only one line can be entered in a text_input, so this will be either empty or a single playlist link
+valid_playlist_link_found = [user_playlist_input] if "/playlist/" in user_playlist_input else []
 link_count = len(valid_links_found)
 
 if link_count > 0:
@@ -173,7 +182,7 @@ if st.button("Create My PDF", type="primary"):
             progress_bar.progress(0, text="PDF generation starting...")
             
             # 1. Generate the PDF
-            pdf_data = utils.create_pdf_in_memory(songs, progress_bar)
+            pdf_data = utils.create_pdf_in_memory(songs, valid_playlist_link_found, progress_bar)
             
             status.update(label="All Cards Generated!", state="complete")
             progress_bar.empty()

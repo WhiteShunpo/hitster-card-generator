@@ -594,7 +594,7 @@ def fetch_no_api_data_from_list(urls, progress_bar=None):
             
     return songs
 
-def create_pdf_in_memory(songs, progress_bar=None):
+def create_pdf_in_memory(songs, valid_playlist_link_found, progress_bar=None):
     if not songs:
         return None
 
@@ -626,7 +626,8 @@ def create_pdf_in_memory(songs, progress_bar=None):
             y = height - margin_y - (row + 1) * card_size
             
             # STEP 1: Turn the URL string into a QR Image object
-            base_qr = create_qr_code(song['link']) 
+            song_link = song['link'] + '?context=spotify:playlist:' + valid_playlist_link_found[0].split('/playlist/')[1].split('?')[0] + '&' + valid_playlist_link_found[0].split('?')[1]
+            base_qr = create_qr_code(song_link) 
             
             # STEP 2: Pass that IMAGE object to the neon rings function
             qr_pil = create_qr_with_neon_rings_in_memory(base_qr) 
