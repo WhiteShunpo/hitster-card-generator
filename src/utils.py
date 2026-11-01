@@ -386,6 +386,23 @@ def parse_playlist_data(playlist_data):
     return songs
 
 
+_SPOTIFY_HOSTS = frozenset({"open.spotify.com"})
+
+
+def _is_spotify_url(url: str) -> bool:
+    """True only for https URLs on open.spotify.com.
+
+    The no-API scrape paths fetch a pasted URL server-side, so the host
+    must be pinned: without this, any pasted link containing '/track/'
+    or '/playlist/' would be fetched, including internal hosts.
+    """
+    try:
+        parsed = urllib.parse.urlparse(url)
+    except ValueError:
+        return False
+    return parsed.scheme == "https" and parsed.hostname in _SPOTIFY_HOSTS
+
+
 # =============================================================================
 # SPOTIFY SCRAPER — extract track links from a public playlist page
 # =============================================================================
@@ -395,6 +412,9 @@ def scrape_playlist_track_links(playlist_url) -> list[str]:
     Scrape individual track URLs from a public Spotify playlist page.
     Returns a list of 'https://open.spotify.com/track/...' URLs.
     """
+    if not _is_spotify_url(playlist_url):
+        print("Refusing to scrape a non-Spotify playlist URL.")
+        return []
     headers = {'User-Agent': 'Mozilla/5.0'}
     try:
         res = requests.get(playlist_url, headers=headers, timeout=10)
@@ -1000,6 +1020,9 @@ def fetch_no_api_data_from_list(urls, progress_bar=None):
     
     for i, url in enumerate(urls):
         idx = i + 1
+        if not _is_spotify_url(url):
+            errors.append({"url": url, "error": "Not an open.spotify.com URL, skipped"})
+            continue
         print(f"  [{idx}/{total}] Scraping: {url}")
         headers = {'User-Agent': 'Mozilla/5.0'}
         try:
